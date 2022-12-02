@@ -1,0 +1,92 @@
+const path = require('path');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const errorController = require('./controllers/error');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
+
+app.use(errorController.get404);
+
+app.listen(3000);
+
+
+const backdrop = document.querySelector('.backdrop');
+const sideDrawer = document.querySelector('.mobile-nav');
+const menuToggle = document.querySelector('#side-menu-toggle');
+
+function backdropClickHandler() {
+  backdrop.style.display = 'none';
+  sideDrawer.classList.remove('open');
+}
+
+function menuToggleClickHandler() {
+  backdrop.style.display = 'block';
+  sideDrawer.classList.add('open');
+}
+
+backdrop.addEventListener('click', backdropClickHandler);
+menuToggle.addEventListener('click', menuToggleClickHandler);
+
+
+
+
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const adminController = require('../controllers/admin');
+
+const router = express.Router();
+
+// /admin/add-product => GET
+router.get('/add-product', adminController.getAddProduct);
+
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
+
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
+
+module.exports = router;
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const shopController = require('../controllers/shop');
+
+const router = express.Router();
+
+router.get('/', shopController.getIndex);
+
+router.get('/products', shopController.getProducts);
+
+router.get('/products/:productId', shopController.getProduct);
+
+router.get('/cart', shopController.getCart);
+
+router.get('/orders', shopController.getOrders);
+
+router.get('/checkout', shopController.getCheckout);
+
+module.exports = router;
+
