@@ -1,0 +1,155 @@
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const User = sequelize.define('user', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  name: Sequelize.STRING,
+  email: Sequelize.STRING
+});
+
+module.exports = User;
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const Cart = sequelize.define('cart', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  }
+});
+
+module.exports = Cart;
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const CartItem = sequelize.define('cartItem', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  quantity: Sequelize.INTEGER
+});
+
+module.exports = CartItem;
+
+
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const User = sequelize.define('user', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  name: Sequelize.STRING,
+  email: Sequelize.STRING
+});
+
+module.exports = User;
+
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const Cart = sequelize.define('cart', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  }
+});
+
+module.exports = Cart;
+
+const Sequelize = require('sequelize');
+
+const sequelize = require('../util/database');
+
+const CartItem = sequelize.define('cartItem', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  quantity: Sequelize.INTEGER
+});
+
+module.exports = CartItem;
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const shopController = require('../controllers/shop');
+
+const router = express.Router();
+
+router.get('/', shopController.getIndex);
+
+router.get('/products', shopController.getProducts);
+
+router.get('/products/:productId', shopController.getProduct);
+
+router.get('/cart', shopController.getCart);
+
+router.post('/cart', shopController.postCart);
+
+router.post('/cart-delete-item', shopController.postCartDeleteProduct);
+
+router.get('/orders', shopController.getOrders);
+
+router.get('/checkout', shopController.getCheckout);
+
+module.exports = router;
+
+
+
+const path = require('path');
+
+const express = require('express');
+
+const adminController = require('../controllers/admin');
+
+const router = express.Router();
+
+// /admin/add-product => GET
+router.get('/add-product', adminController.getAddProduct);
+
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
+
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
+
+router.get('/edit-product/:productId', adminController.getEditProduct);
+
+router.post('/edit-product', adminController.postEditProduct);
+
+router.post('/delete-product', adminController.postDeleteProduct);
+
+module.exports = router;
