@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmark Keeper</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/efb0965e4a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">    
+</head>
+<body>
+       <!-- Open Model   -->
+       <h1 id="show-modal">Add Bookmark</h1>
+       <!-- BookMark  -->
+       <div id="bookmarks-container" class="container">
+            <div class="items">
+                <i class="fas fa-times" id="delete-bookmark" title="Delete"></i>
+
+                <div class="name">
+                    <img src="https://cdn.icon-icons.com/icons2/2107/PNG/512/file_type_apache_icon_130750.png" alt="Favicon">
+                    <a href="https://www.tkinter.com">Tkinter</a>
+                </div>
+            </div>
+            <div class="items">
+                <i class="fas fa-times" id="delete-bookmark" title="delete"></i>
+                <div class="name">
+                    <img src="https://cdn.icon-icons.com/icons2/2107/PNG/512/file_type_apache_icon_130750.png" alt="Favicon">
+                    <a href="https://www.tkinter.com">Tkinter</a>
+                </div>
+            </div>
+            <div class="items">
+                <i class="fas fa-times" id="delete-bookmark" title="delete"></i>
+                <div class="name">
+                    <img src="https://cdn.icon-icons.com/icons2/2107/PNG/512/file_type_apache_icon_130750.png" alt="Favicon">
+                    <a href="https://www.tkinter.com">Tkinter</a>
+                </div>
+            </div>
+    </div>
+    <!-- Modal  -->
+    <div class="modal-container " id="modal"> 
+        <!-- Add show Modal to class  -->
+        <div class="modal">
+            <i class="fas fa-times close-icon" id="close-modal"></i>
+            <div class="modal-header">
+                <h3>Add Bookmark</h3>
+            </div>
+            <div class="modal-content">
+                <form id="bookmark-form">
+                    <!-- Website Name  -->
+                    <div class="form-group">
+                        <label for="website-name" class="form-label">Website Name</label>
+                        <input type="text" class="form-input" id="website-name">
+                    </div>
+                    <!-- Website url  -->
+                    <div class="form-group">
+                        <label for="website-url" class="form-label">Website url</label>
+                        <input type="text" class="form-input" id="website-url">
+                    </div>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript file  -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+const modal = document.getElementById('modal');
+const modalShow = document.getElementById('show-modal');
+const modalClose = document.getElementById('close-modal');
+const bookmarkForm = document.getElementById('bookmark-form');
+const websiteNameEl = document.getElementById('website-name');
+const websiteUrlEl = document.getElementById('website-url');
+const bookmarksContainer = document.getElementById('bookmarks-container');
+
+let bookmarks = [];
+
+// Show Modal, Focus on Input
+function showModal() {
+  modal.classList.add('show-modal');
+  websiteNameEl.focus();
+}
+
+// Modal Event Listeners
+modalShow.addEventListener('click', showModal);
+modalClose.addEventListener('click', () => modal.classList.remove('show-modal'));
+window.addEventListener('click', (e) => (e.target === modal ? modal.classList.remove('show-modal') : false));
+
+// Validate Form
+function validate(nameValue, urlValue) {
+  const expression = /(https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
+  const regex = new RegExp(expression);
+  if (!nameValue || !urlValue) {
+    alert('Please submit values for both fields.');
+    return false;
+  }
+  if (!urlValue.match(regex)) {
+    alert('Please provide a valid web address.');
+    return false;
+  }
+  // Valid
+  return true;
+}
+
+// Build Bookmarks
+function buildBookmarks() {
+  // Remove all bookmark elements
+  bookmarksContainer.textContent = '';
+  // Build items
+  bookmarks.forEach((bookmark) => {
+    const { name, url } = bookmark;
+    // Item
+    const item = document.createElement('div');
+    item.classList.add('items');
+    // Close Icon
+    const closeIcon = document.createElement('i');
+    closeIcon.classList.add('fas', 'fa-times');
+    closeIcon.setAttribute('title', 'Delete Bookmark');
+    closeIcon.setAttribute('onclick', `deleteBookmark('${url}')`);
+    // Favicon / Link Container
+    const linkInfo = document.createElement('div');
+    linkInfo.classList.add('name');
+    // Favicon
+    const favicon = document.createElement('img');
+    favicon.setAttribute('src', `https://s2.googleusercontent.com/s2/favicons?domain=${url}`);
+    favicon.setAttribute('alt', 'Favicon');
+    // Link
+    const link = document.createElement('a');
+    link.setAttribute('href', `${url}`);
+    link.setAttribute('target', '_blank');
+    link.textContent = name;
+    // Append to bookmarks container
+    linkInfo.append(favicon, link);
+    item.append(closeIcon, linkInfo);
+    bookmarksContainer.appendChild(item);
+  });
+}
+
+// Fetch bookmarks
+function fetchBookmarks() {
+  // Get bookmarks from localStorage if available
+  if (localStorage.getItem('bookmarks')) {
+    bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+  } else {
+    // Create bookmarks array in localStorage
+    bookmarks = [
+      {
+        name: 'Jacinto Design',
+        url: 'http://jacinto.design',
+      },
+    ];
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  }
+  buildBookmarks();
+}
+
+// Delete Bookmark
+function deleteBookmark(url) {
+  // Loop through the bookmarks array
+  bookmarks.forEach((bookmark, i) => {
+    if (bookmark.url === url) {
+      bookmarks.splice(i, 1);
+    }
+  });
+  // Update bookmarks array in localStorage, re-populate DOM
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  fetchBookmarks();
+}
+
+function storeBookmark(e) {
+  e.preventDefault();
+  const nameValue = websiteNameEl.value;
+  let urlValue = websiteUrlEl.value;
+  if (!urlValue.includes('http://', 'https://')) {
+    urlValue = `https://${urlValue}`;
+  }
+  // Validate
+  if (!validate(nameValue, urlValue)) {
+    return false;
+  }
+  // Set bookmark object, add to array
+  const bookmark = {
+    name: nameValue,
+    url: urlValue,
+  };
+  bookmarks.push(bookmark);
+  // Set bookmarks in localStorage, fetch, reset input fields
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  fetchBookmarks();
+  bookmarkForm.reset();
+  websiteNameEl.focus();
+}
+
+// Event Listener
+bookmarkForm.addEventListener('submit', storeBookmark);
+
+// On Load, Fetch Bookmarks
+fetchBookmarks();
+
+
+---------------------------------------------------------------------------
+
+
+
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@300&display=swap");
+
+:root {
+  --primary-color: #7c59b0;
+  --border-radius: 5px;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Karla, sans-serif;
+  background-color: var(--primary-color);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='152' height='152' viewBox='0 0 152 152'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='temple' fill='%23e5ddf1' fill-opacity='0.4'%3E%3Cpath d='M152 150v2H0v-2h28v-8H8v-20H0v-2h8V80h42v20h20v42H30v8h90v-8H80v-42h20V80h42v40h8V30h-8v40h-42V50H80V8h40V0h2v8h20v20h8V0h2v150zm-2 0v-28h-8v20h-20v8h28zM82 30v18h18V30H82zm20 18h20v20h18V30h-20V10H82v18h20v20zm0 2v18h18V50h-18zm20-22h18V10h-18v18zm-54 92v-18H50v18h18zm-20-18H28V82H10v38h20v20h38v-18H48v-20zm0-2V82H30v18h18zm-20 22H10v18h18v-18zm54 0v18h38v-20h20V82h-18v20h-20v20H82zm18-20H82v18h18v-18zm2-2h18V82h-18v18zm20 40v-18h18v18h-18zM30 0h-2v8H8v20H0v2h8v40h42V50h20V8H30V0zm20 48h18V30H50v18zm18-20H48v20H28v20H10V30h20V10h38v18zM30 50h18v18H30V50zm-2-40H10v18h18V10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+h1 {
+  color: white;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  text-align: center;
+
+  text-transform: uppercase;
+  width: 275px;
+  margin: 20px auto 10px;
+  user-select: none;
+}
+
+h1:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+/* BookMarks  */
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.items {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin: 10px;
+}
+
+.items:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+a {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+a:link,
+a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+}
+
+.fa-times {
+  float: right;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.name {
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+.name img {
+  height: 20px;
+  width: 20px;
+  vertical-align: sub;
+  margin-right: 5px;
+}
+
+/* Modal  */
+.modal-container {
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.show-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  max-width: 95%;
+  width: 500px;
+  animation: modalopen 1s;
+}
+
+@keyframes modalopen {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.close-icon {
+  float: right;
+  color: white;
+  font-size: 24px;
+  position: relative;
+  top: 13px;
+  right: 13px;
+  cursor: pointer;
+}
+
+.modal-header {
+  background: var(--primary-color);
+  color: white;
+  padding: 15px;
+}
+
+h3 {
+  margin: 0;
+}
+
+.modal-content {
+  padding: 20px;
+  background: whitesmoke;
+}
+
+/* Form Specific  */
+.form-group {
+  height: 55px;
+}
+
+.form-input {
+  width: 97%;
+  padding: 5px;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  display: block;
+  outline: none;
+}
+
+.form-label {
+  color: var(--primary-color);
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  color: white;
+  background: var(--primary-color);
+  height: 30px;
+  width: 100px;
+  border: none;
+  border-radius: var(--border-radius);
+  margin-top: 10px;
+}
+
+button:hover {
+  filter: brightness(110%);
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Media query  */
+@media screen and (max-width: 600px) {
+  .container {
+    flex-direction: column;
+  }
+}
